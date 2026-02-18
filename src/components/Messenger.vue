@@ -1,9 +1,20 @@
 <script setup>
-import { ref, toRaw } from 'vue';
+import { ref, toRaw, useTemplateRef, onMounted, watch, nextTick } from 'vue';
 import { useMessageStore } from '@/data/messagesStore';
 import Message from '@/models/Message';
 const messageStore = useMessageStore();
 const message = ref(new Message());
+const scrollBottom = useTemplateRef('scroll-bottom')
+
+onMounted(() => {
+    scrollBottom.value.scrollIntoView();
+})
+
+watch(() => messageStore.messages.length, () => {
+    nextTick(() => {
+        scrollBottom.value?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    })
+}, { immediate: true })
 
 const user = ref({
     username: localStorage.getItem('username') || '',
@@ -12,21 +23,40 @@ const user = ref({
 })
 
 function sendMessage() {
-    const msg = toRaw(message.value);
-    messageStore.add(user.value.username, user.value.first_name, user.value.last_name, msg);
-    message.value = new Message();
+    if (message.value.message) {
+        if (!message.value.message) return;
+
+        message.value.username = user.value.username;
+        message.value.first_name = user.value.first_name;
+        message.value.last_name = user.value.last_name;
+
+        messageStore.add(message.value);
+        message.value = new Message();
+    }
 }
 
-
+function handleClick(index, username, message) {
+    if (message === '(redacted)') {
+        messageStore.unredact(index, username);
+    } else {
+        messageStore.redact(index, username);
+    }
+}
 </script>
 
 <template>
     <main>
-        <p>Messenger</p>
-        <p>Current User: {{ user.username }}</p>
-        <div class="chat-container">
+        <div class="chat-header">
+            <div class="contact-info">
+                <div class="contact-name">
+                    {{ user.first_name }} {{ user.last_name }}
+                </div>
+            </div>
+        </div>
+        <div class="chat-container" ref="chat-container">
             <div v-for="(message, index) in messageStore.messages" :key="index"
-                :class="['message', message.username === user.username ? 'sent' : 'received']">
+                :class="['message', message.username === user.username ? 'sent' : 'received']"
+                @click="handleClick(index, user.username, message.message)">
                 <div class="message-sender">
                     {{ message.first_name }} {{ message.last_name }}
                 </div>
@@ -34,9 +64,10 @@ function sendMessage() {
                     {{ message.message }}
                 </div>
             </div>
+            <div ref="scroll-bottom" style="visibility: hidden;"></div>
         </div>
         <div class="input-container">
-            <input v-model="message.message" type="text" placeholder="iMessage" @keyup.enter="sendMessage"
+            <input v-model="message.message" type="text" placeholder="Send message" @keyup.enter="sendMessage"
                 aria-label="Send message" />
             <button @click="sendMessage">Send</button>
         </div>
@@ -49,7 +80,36 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100vh;
+    height: 90vh;
+}
+
+p {
+    margin: 0;
+}
+
+.chat-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    padding: 16px;
+    background-color: #f2f2f7;
+    height: 5%;
+    width: 30%;
+
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+
+    border-bottom: 1px solid #d1d1d6;
+}
+
+.contact-name {
+    font-weight: 600;
+    font-size: 16px;
+    color: #000;
 }
 
 .chat-container {
@@ -59,11 +119,9 @@ main {
     padding: 16px;
     background-color: #f2f2f7;
     height: 70%;
-    width: 20%;
+    width: 30%;
     overflow-y: auto;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    border-top-right-radius: 8px;
-    border-top-left-radius: 8px;
 }
 
 /* Common message styles */
@@ -117,7 +175,7 @@ main {
     padding: 16px;
     background-color: #f2f2f7;
     height: 5%;
-    width: 20%;
+    width: 30%;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     border-bottom-right-radius: 8px;
     border-bottom-left-radius: 8px;

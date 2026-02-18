@@ -1,26 +1,27 @@
 import initialMessages from './messages.js'
-import Message from '@/models/Message'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useMessageStore = defineStore('messageStore', () => {
     const messages = reactive([...initialMessages])
 
-    function add(username, first_name, last_name, message) {
-        if (message instanceof Message) {
-            const newMessage = {username: username, first_name: first_name, last_name: last_name, message: message}
-            messages.push(newMessage);
+    function add(message) {
+        messages.push(message);
+        console.log(messages[messages.length - 1])
+    }
+
+    function redact(index, loggedInUser) {
+        if (messages[index].username === loggedInUser) {
+            messages[index].redacted_msg = messages[index].message
+            messages[index].message = '(redacted)'
+        }
+    }
+    function unredact(index, loggedInUser) {
+        if (messages[index].username === loggedInUser) {
+            messages[index].message = messages[index].redacted_msg
         }
     }
 
-    function toggleRedact(index, loggedInUser) {
-        if (messages[index].value.username === loggedInUser) {
-            const redactedMessage = messages[index];
-            messages[index] = '(redacted)'
-        }
-        //add unredact
-    }
-
-    return { messages, add, toggleRedact }
+    return { messages, add, redact, unredact }
 
 })
