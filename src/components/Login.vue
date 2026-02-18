@@ -53,7 +53,7 @@ function login(user) {
 </template>
 
 <style scoped>
-/* Page background */
+
 .login-wrapper {
     height: 100vh;
     display: flex;
@@ -63,7 +63,6 @@ function login(user) {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* Card container */
 .login-card {
     background: white;
     padding: 32px;
@@ -75,14 +74,12 @@ function login(user) {
     gap: 16px;
 }
 
-/* Title */
 h2 {
     margin: 0;
     text-align: center;
     font-weight: 600;
 }
 
-/* iOS-style input */
 .ios-input {
     padding: 12px 16px;
     border-radius: 14px;
@@ -93,7 +90,6 @@ h2 {
     appearance: none;
 }
 
-/* iOS-style button */
 .ios-button {
     padding: 12px 16px;
     border-radius: 20px;

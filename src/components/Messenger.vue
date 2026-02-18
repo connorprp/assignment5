@@ -89,10 +89,6 @@ main {
     height: 90vh;
 }
 
-p {
-    margin: 0;
-}
-
 .chat-header {
     display: flex;
     justify-content: center;
@@ -130,7 +126,6 @@ p {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* Common message styles */
 .message {
     max-width: 70%;
     padding: 10px 14px;
@@ -141,7 +136,6 @@ p {
     box-shadow: 0 1px 1.5px rgba(0, 0, 0, 0.1);
 }
 
-/* Sender name */
 .message-sender {
     font-weight: bold;
     margin-bottom: 4px;
@@ -149,12 +143,10 @@ p {
     opacity: 0.8;
 }
 
-/* Message content */
 .message-text {
     font-size: 16px;
 }
 
-/* Received messages (left-aligned, gray) */
 .message.received {
     background-color: #e5e5ea;
     color: #000;
@@ -165,7 +157,6 @@ p {
     border-bottom-right-radius: 20px;
 }
 
-/* Sent messages (right-aligned, blue) */
 .message.sent {
     background-color: #007aff;
     color: #fff;
