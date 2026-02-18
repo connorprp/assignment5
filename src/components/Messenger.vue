@@ -46,6 +46,12 @@ function handleClick(index, username, message) {
 
 <template>
     <main>
+        <nav class="ios-nav">
+            <RouterLink to="/login" class="ios-back">
+                ← Back to Login
+            </RouterLink>
+        </nav>
+
         <div class="chat-header">
             <div class="contact-info">
                 <div class="contact-name">
@@ -209,5 +215,28 @@ p {
 
 .input-container button:active {
     opacity: 0.8;
+}
+
+.ios-nav {
+    width: 100%;
+    padding: 12px 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.ios-back {
+    color: #007aff;
+    text-decoration: none;
+    font-size: 17px;
+    font-weight: 500;
+    transition: opacity 0.15s ease, transform 0.05s ease;
+}
+
+.ios-back:hover {
+    opacity: 0.75;
+}
+
+.ios-back:active {
+    opacity: 0.5;
+    transform: scale(0.98);
 }
 </style>
